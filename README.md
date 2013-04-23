@@ -1,7 +1,20 @@
 Synchronous Counting
 ====================
 
-We have a complete communication network on _n_ nodes, each of which
+This repository contains supporting material related to the following
+manuscript:
+
+  - Danny Dolev, Janne H. Korhonen, Christoph Lenzen,
+    Joel Rybicki, and Jukka Suomela:
+    [Synchronous Counting and Computational Algorithm Design][1]
+
+[1]: http://arxiv.org/abs/1304.5719
+
+
+Summary
+-------
+
+Consider a complete communication network on _n_ nodes, each of which
 is a state machine with s states. In **synchronous 2-counting**, the
 nodes receive a common clock pulse and they have to agree on which
 pulses are "odd" and which are "even". We require that the solution is
@@ -48,3 +61,7 @@ University of Helsinki, the Helsinki Doctoral Programme in Computer
 Science – Advanced Computing and Intelligent Systems, the Swiss
 Society of Friends of the Weizmann Institute of Science, and the
 German Research Foundation (DFG).
+
+Computing environment: [Ukko cluster][2].
+
+[2]: http://www.cs.helsinki.fi/en/compfac/high-performance-cluster-ukko
