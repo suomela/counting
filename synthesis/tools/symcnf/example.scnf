@@ -1,0 +1,10 @@
+# this is an example
+foo -bar 
+-bar baz 
+# another comment appears here
+-baz
+# define some more variablese
+str_a str_b str_c 
+# the output file should have 
+# - 4 clauses
+# - 6 variables

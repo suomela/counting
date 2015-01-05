@@ -1,0 +1,8 @@
+BASE      = minisat
+EXEC      = symsync
+DEPDIR    = $(BASE)/mtl $(BASE)/utils $(BASE)/core solver-reducer
+CFLAGS    = -I$(MROOT)/$(BASE) -DMINIRED
+LFLAGS    = -pthread
+OBJEXT    = o
+
+include $(MROOT)/$(BASE)/mtl/template.mk

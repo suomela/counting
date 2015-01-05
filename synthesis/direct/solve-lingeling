@@ -1,0 +1,10 @@
+#!/bin/sh
+
+seed="$1"
+src="$2"
+dst="$3"
+dest1=$dst.tmp 
+dest2=$dst
+
+lingeling --seed="$seed" "$src" > "$dest1"
+grep '^s ' "$dest1" && mv "$dest1" "$dest2"

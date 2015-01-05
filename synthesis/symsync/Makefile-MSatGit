@@ -1,0 +1,19 @@
+CFLAGS = -D GITHUB_MINISAT -pg -O3 -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -Wall -Wno-parentheses -Wextra -Iminisat-install/include -Iminisat-install/include/minisat -g
+LIBS   = -lz -lminisat
+LFLAGS = --static -Wall -Lminisat-install/lib
+
+SRCS = $(wildcard *.cc) 
+OBJS = $(SRCS:.cc=.o)
+
+.PHONY: all clean
+
+all: symsync
+
+symsync: $(OBJS) 
+	g++ $(LFLAGS) -o$@ $^ $(LIBS)
+
+%.o: %.cc
+	g++ $(CFLAGS) -c -o $@ $^
+
+clean:
+	rm -f $(OBJS) symsync

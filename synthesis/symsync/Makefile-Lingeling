@@ -1,0 +1,6 @@
+EXEC   = symsync
+DEPDIR = mtl utils core
+CFLAGS = -Ilingeling -DLINGELING
+LFLAGS = -Llingeling -llgl 
+
+include $(MROOT)/mtl/template.mk

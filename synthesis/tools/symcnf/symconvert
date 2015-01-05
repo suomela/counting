@@ -1,0 +1,26 @@
+#!/bin/sh
+# Input: a symbolic CNF file 
+# Output: a DIMACS CNF file
+
+if [ -z "$1" ]
+  then
+    echo "Usage: $0 [symbolic cnf] [map file]"
+	echo
+	echo "The parameter [map file] is optional. The default value for [map file] is '[symbolic cnf].map'."
+	exit 1
+fi
+
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+input=$1
+if [ -z "$2" ]
+  then
+  mapfile=$input.map
+else 
+  mapfile=$2
+fi
+
+
+# Read the symbols from the symbolic CNF file and generate a variable map file
+grep -v '^#' $input | tr -d '-' | tr ' ' '\n' | sort -u | $DIR/enumerate > $mapfile
+$DIR/translate $input $mapfile

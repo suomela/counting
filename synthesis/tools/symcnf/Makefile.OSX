@@ -1,0 +1,4 @@
+include Makefile
+
+CXX=xcrun clang++
+CXXFLAGS=-g -std=c++11 -stdlib=libc++ -march=native -O4 -Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-weak-vtables

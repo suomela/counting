@@ -1,0 +1,235 @@
+#!/usr/bin/env python
+
+import os
+import subprocess
+import sys
+import time
+from itertools import product, permutations
+
+DIR = sys.argv[1] # "output"
+CONVERT = "../tools/symcnf/symconvert"
+
+BYZ = "*"
+
+def neg(s):
+    return '-' + s
+
+def vec(x):
+    return ''.join(map(str,x))
+
+def a(u,i,y):
+    return "a{},{},{}".format(vec(u), i, y)
+
+def r(x,i,y):
+    return "r{},{},{}".format(vec(x), i, y)
+
+def e(x,y):
+    return "e{},{}".format(vec(x), vec(y))
+
+def b(x,t):
+    return "b{},{}".format(vec(x), t)
+
+def proj(u, F):
+    return tuple(BYZ if i in F else x for i,x in enumerate(u))
+
+class Gen:
+    def __init__(self, flags, s, n, times):
+        self.s = s
+        self.n = n
+        self.times = times
+        self.basename = '{}-{}-t-{}'.format(s,n,'-'.join(map(str,times)))
+        if len(flags) > 0:
+            self.basename += '-' + '-'.join(sorted(flags))
+        self.cyclic = 'c' in flags
+        self.leader = 'l' in flags
+
+    def report(self, msg):
+        current = time.time()
+        print "{:12.3f} {}".format(current - self.start_time, msg)
+
+    def open(self):
+        self.f = open(os.path.join(DIR, 'scnf-{}'.format(self.basename)), 'w')
+        self.report('open')
+
+    def close(self):
+        self.f.close()
+        self.f = None
+        self.report('close')
+
+    def convert(self):
+        fscnf, fcnf, fmap = [
+            os.path.join(DIR, '{}-{}'.format(k, self.basename))
+            for k in 'scnf', 'cnf', 'map'
+        ]
+        with open(fcnf, 'w') as f:
+            subprocess.check_call([CONVERT, fscnf, fmap], stdout=f)
+        self.report('convert')
+
+    def clause(self, l):
+        self.f.write(' '.join(l))
+        self.f.write('\n')
+
+    def clause1(self, l1):
+        self.f.write(l1 + '\n')
+
+    def clause2(self, l1, l2):
+        self.f.write(l1 + ' ' + l2 + '\n')
+
+    def same(self, v1, v2):
+        self.clause2(neg(v1), v2)
+        self.clause2(v1, neg(v2))
+
+    def ostates(self):
+        return product(range(self.s), repeat=self.n)
+
+    def rstates(self, F):
+        ranges = []
+        for i in range(self.n):
+            if i in F:
+                ranges.append((BYZ,))
+            else:
+                ranges.append(range(self.s))
+        return product(*ranges)
+
+    def good(self, i):
+        return (i,) * self.n
+
+    def inputs(self):
+        for u in self.ostates():
+            for i in range(self.n):
+                self.clause(a(u,i,y) for y in range(self.s))
+                for y1 in range(self.s):
+                    for y2 in range(y1 + 1, self.s):
+                        self.clause2(neg(a(u,i,y1)), neg(a(u,i,y2)))
+
+        if self.cyclic:
+            for u1 in self.ostates():
+                for i in range(1, self.n):
+                    shift = self.n - i
+                    u2 = u1[shift:] + u1[:shift]
+                    for y in range(self.s):
+                        a1 = a(u1,0,y)
+                        a2 = a(u2,i,y)
+                        self.same(a1, a2)
+        elif self.leader:
+            for u1 in self.ostates():
+                # Leader's perspective
+                u2 = (u1[0],) + tuple(sorted(u1[1:]))
+                for y in range(self.s):
+                    a1 = a(u1,0,y)
+                    a2 = a(u2,0,y)
+                    self.same(a1, a2)
+                # Everyone else
+                for i in range(1, self.n):
+                    others = (u1[j] for j in range(1, self.n) if j != i)
+                    u2 = (u1[0],u1[i]) + tuple(sorted(others))
+                    for y in range(self.s):
+                        a1 = a(u1,i,y)
+                        a2 = a(u2,1,y)
+                        self.same(a1, a2)
+
+        self.report('inputs')
+
+    def trivial(self):
+        for i in range(self.n):
+            self.clause1(a(self.good(0), i, 1))
+            self.clause1(a(self.good(1), i, 0))
+        self.report('trivial')
+
+    def proj(self, F, t):
+        correct = [i for i in range(self.n) if i not in F]
+
+        if len(F) == 0:
+            for x in self.ostates():
+                for y in self.ostates():
+                    self.clause([e(x,y)] + [neg(a(x,i,y[i])) for i in correct])
+        else:
+            for u in self.ostates():
+                for i in correct:
+                    for y in range(self.s):
+                        self.clause2(r(proj(u,F),i,y), neg(a(u,i,y)))
+            for x in self.rstates(F):
+                for y in self.rstates(F):
+                    self.clause([e(x,y)] + [neg(r(x,i,y[i])) for i in correct])
+
+        goods = tuple(proj(self.good(i),F) for i in (0,1))
+
+        for x in self.rstates(F):
+            if x in goods:
+                continue
+            for y in self.rstates(F):
+                if y in goods:
+                    continue
+                if x == y:
+                    continue
+                self.clause2(neg(e(x,y)), b(x,1))
+                for k in range(1, t):
+                    self.clause((neg(e(x,y)), neg(b(y,k)), b(x,k + 1)))
+
+        for x in self.rstates(F):
+            self.clause1(neg(e(x,x)))
+            if x not in goods:
+                self.clause1(neg(e(goods[0], x)))
+                self.clause1(neg(e(goods[1], x)))
+                self.clause1(neg(b(x, t)))
+
+        self.clause1(e(goods[0], goods[1]))
+        self.clause1(e(goods[1], goods[0]))
+
+        self.report('t = {}, F = {{{}}}'.format(t, ' '.join(map(str, F))))
+
+    def run(self):
+        self.start_time = time.time()
+        self.report(self.basename)
+        self.open()
+        self.inputs()
+        self.trivial()
+        self.proj((), self.times[0])
+        if self.cyclic:
+            if len(self.times) >= 2:
+                self.proj((0,), self.times[1])
+            if len(self.times) >= 3:
+                for i in range(1, 1 + int(self.n/2)):
+                    self.proj((0,i), self.times[2])
+        elif self.leader:
+            if len(self.times) >= 2:
+                self.proj((0,), self.times[1])
+                self.proj((1,), self.times[1])
+            if len(self.times) >= 3:
+                self.proj((0,1), self.times[2])
+                self.proj((1,2), self.times[2])
+        else:
+            if len(self.times) >= 2:
+                for f in range(self.n):
+                    self.proj((f,), self.times[1])
+            if len(self.times) >= 3:
+                for f1 in range(self.n):
+                    for f2 in range(f1 + 1, self.n):
+                        self.proj((f1,f2), self.times[2])
+        self.close()
+        self.convert()
+
+
+# Usage:
+#   generate-sat outdir s n t_0 t_1 ... t_f
+#   generate-sat outdir s n t_0 t_1 ... t_f -- flags ...
+
+def main():
+    s = int(sys.argv[2])
+    n = int(sys.argv[3])
+    i = 4
+    times = []
+    while len(sys.argv) > i:
+        if sys.argv[i] == '--':
+            i += 1
+            break
+        times.append(int(sys.argv[i]))
+        i += 1
+    assert 1 <= len(times) <= 3
+    flags = sys.argv[i:]
+    if not os.path.exists(DIR):
+        os.makedirs(DIR)
+    g = Gen(flags, s, n, times)
+    g.run()
+
+main()

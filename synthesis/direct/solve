@@ -1,0 +1,17 @@
+#!/bin/bash
+file=$1
+sol=$(echo "$file" | sed s,cnf-,sol-,)
+map=$(echo "$file" | sed s,cnf-,map-,)
+alg=$(echo "$file" | sed s,cnf-,alg-,).txt
+./solve-lingeling 0 $file $sol
+
+if grep -q "^s SAT" $sol; then
+    echo "Saving algorithm to '$alg'"
+    ../tools/symcnf/result $sol $map | ./print-alg > $alg
+else
+    echo "Instance was unsatisfiable"
+fi
+
+
+
+

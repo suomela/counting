@@ -1,0 +1,15 @@
+#!/bin/sh
+
+seed="$1"
+src="$2"
+dst="$3"
+dest1=$dst.tmp 
+dest2=$dst
+
+minisat -rnd-freq=0.02 -rnd-seed="$seed" "$src" "$dest1"
+head -1 "$dest1"
+# Hack to make minisat file format compatible with lingeling's
+echo -n "s " > "$dest2"
+head -1 "$dest1" >> "$dest2"
+echo -n "v " >> "$dest2" 
+tail -1 "$dest1" >> "$dest2"

@@ -4,11 +4,10 @@ Synchronous Counting
 This repository contains supporting material related to the following
 manuscript:
 
-  - Danny Dolev, Janne H. Korhonen, Christoph Lenzen,
-    Joel Rybicki, and Jukka Suomela:
-    [Synchronous Counting and Computational Algorithm Design][1]
-
-[1]: http://arxiv.org/abs/1304.5719
+  - Danny Dolev, Keijo Heljanko, Matti Järvisalo, Janne H. Korhonen,
+    Christoph Lenzen, Joel Rybicki, Jukka Suomela, and Siert Wieringa:
+    Synchronous Counting and Computational Algorithm Design,
+    http://arxiv.org/abs/1304.5719
 
 
 Summary
@@ -44,24 +43,19 @@ For a quick start, try:
 For some illustrations of the computer-generated algorithms, see the
 directory `illustrations`.
 
+Synthesis tools for finding computer-generated algorithms are given in
+the `synthesis` directory.
+
 
 Authors
 -------
 
   - Danny Dolev, The Hebrew University of Jerusalem
+  - Keijo Heljanko, HIIT and Aalto University
+  - Matti Järvisalo HIIT and University of Helsinki
   - Janne H. Korhonen, HIIT and University of Helsinki
-  - Christoph Lenzen, MIT
-  - Joel Rybicki, HIIT and University of Helsinki
-  - Jukka Suomela, HIIT and University of Helsinki
+  - Christoph Lenzen, MPI Saarbrücken
+  - Joel Rybicki, HIIT and Aalto University
+  - Jukka Suomela, HIIT and Aalto University
+  - Siert Wieringa, HIIT and Aalto University
 
-This work was supported in part by the Israeli Centers of Research
-Excellence (I-CORE) program, the Israeli Ministry of Science and
-Technology, the Academy of Finland, the Research Funds of the
-University of Helsinki, the Helsinki Doctoral Programme in Computer
-Science – Advanced Computing and Intelligent Systems, the Swiss
-Society of Friends of the Weizmann Institute of Science, and the
-German Research Foundation (DFG).
-
-Computing environment: [Ukko cluster][2].
-
-[2]: http://www.cs.helsinki.fi/en/compfac/high-performance-cluster-ukko

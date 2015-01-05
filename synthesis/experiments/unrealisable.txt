@@ -1,0 +1,5 @@
+{'states': 2, 'time': 79, 'rnd_freq': 0.02, 'nodes': 5, 'faulty': 1, 'cyclicity': 'no-cyclic'}
+{'states': 3, 'time': 6, 'rnd_freq': 0.02, 'nodes': 4, 'faulty': 1, 'cyclicity': 'cyclic'}
+{'states': 3, 'time': 3, 'rnd_freq': 0.02, 'nodes': 6, 'faulty': 1, 'cyclicity': 'cyclic'}
+{'states': 2, 'time': 3, 'rnd_freq': 0.02, 'nodes': 8, 'faulty': 1, 'cyclicity': 'cyclic'}
+{'states': 2, 'time': 7, 'rnd_freq': 0.02, 'nodes': 7, 'faulty': 1, 'cyclicity': 'cyclic'}
