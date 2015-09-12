@@ -2,11 +2,12 @@ Synchronous Counting
 ====================
 
 This repository contains supporting material related to the following
-manuscript:
+paper:
 
   - Danny Dolev, Keijo Heljanko, Matti Järvisalo, Janne H. Korhonen,
     Christoph Lenzen, Joel Rybicki, Jukka Suomela, and Siert Wieringa:
     Synchronous Counting and Computational Algorithm Design,
+    Journal of Computer and System Sciences (to appear),
     http://arxiv.org/abs/1304.5719
 
 
