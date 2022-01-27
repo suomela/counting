@@ -71,7 +71,7 @@ class Util:
         return [ s for i in range(self.N) ]
 
     def all_obs_states(self):
-        p = itertools.product(range(self.S), repeat=self.N)
+        p = itertools.product(list(range(self.S)), repeat=self.N)
         return [ list(reversed(x)) for x in p ]
 
     def parse_state_list(self, s, missing=None):

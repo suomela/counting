@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import itertools
 import os.path
@@ -62,7 +62,7 @@ class Projection:
         os_good = [ self.util.all_same(s) for s in (0, 1) ]
         as_good = [ self.util.projection(os1, self.f) for os1 in os_good ]
         i_good = [ self.as_map[tuple(as1)] for as1 in as_good ]
-        i_all = range(len(self.as_list))
+        i_all = list(range(len(self.as_list)))
         i_bad = [ i for i in i_all if i not in i_good ]
         set_good = set(i_good)
 
@@ -123,16 +123,16 @@ class Alg:
 
     def verify_projection(self, f):
         if f is None:
-            print "- no node is faulty:",
+            print("- no node is faulty:", end=' ')
         else:
-            print "- node %u is faulty:" % f,
+            print("- node %u is faulty:" % f, end=' ')
         proj = Projection(self, f)
         t = proj.verify()
         assert t <= self.T, "stabilisation time"
-        print "OK (t = %u)." % t
+        print("OK (t = %u)." % t)
 
     def verify_cyclic(self):
-        print "- cyclically symmetric:",
+        print("- cyclically symmetric:", end=' ')
         for a in self.util.os_list:
             b = self.get_transition(a)
             for n in range(1, self.N):
@@ -140,7 +140,7 @@ class Alg:
                 b2 = self.util.rot(b, n)
                 assert self.get_transition(a2) == b2, "symmetric"
 
-        print "OK."
+        print("OK.")
 
     def get_transition(self, v):
         i = self.util.os_map[tuple(v)]
@@ -148,7 +148,7 @@ class Alg:
 
 def verify(filename):
     basename = os.path.basename(filename)
-    print "verifying: %s" % basename
+    print("verifying: %s" % basename)
     m = RE_FILENAME.match(basename)
     assert m is not None, "correct file name"
     S, N, F, T = [ int(m.group(i)) for i in (1,2,3,4) ]
@@ -156,7 +156,7 @@ def verify(filename):
     alg = Alg(S=S, N=N, F=F, T=T, C=C)
     alg.read_input(filename)
     alg.verify()
-    print
+    print()
 
 for filename in sys.argv[1:]:
     verify(filename)

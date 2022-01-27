@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os.path
 import sys
@@ -55,7 +55,7 @@ class Proof:
     #--- Trivial state transitions are correct
 
     def verify_trivial(self):
-        print "- trivial transitions:",
+        print("- trivial transitions:", end=' ')
         for i, os in enumerate(self.util.os_list):
             for n in range(N):
                 if self.trivial[i][n] is not None:
@@ -65,26 +65,26 @@ class Proof:
                         if x == os[n]:
                             same += 1
                     assert same >= N - 1, "enough similar old states"
-        print "OK."
+        print("OK.")
 
     #--- All cases are covered
 
     def verify_exhaustive(self):
         target = self.util.alg_string(self.trivial)
         all_algs = [ self.util.alg_string(x[0]) for x in self.loops ]
-        print "- candidates are disjoint:",
+        print("- candidates are disjoint:", end=' ')
         for i in range(len(all_algs)):
             for j in range(i):
                 self.verify_disjoint(all_algs[i], all_algs[j])
-        print "OK."
-        print "- list is exhaustive:",
+        print("OK.")
+        print("- list is exhaustive:", end=' ')
         count = 0
         for alg in all_algs:
             self.verify_subset(alg, target)
-            count += 2L**self.count_alg(alg)
+            count += 2**self.count_alg(alg)
         expected = self.count_alg(target)
-        assert count == 2L**expected, "coverage"
-        print "OK."
+        assert count == 2**expected, "coverage"
+        print("OK.")
 
     # Algorithm patterns alg1 and alg2 are disjoint
     # (no algorithm is covered by both alg1 and alg2)
@@ -117,10 +117,10 @@ class Proof:
     #--- Each loop is correct
 
     def verify_loops(self):
-        print "- loops are correct:",
+        print("- loops are correct:", end=' ')
         for alg, loop in self.loops:
             self.verify_one_loop(alg, loop)
-        print "OK."
+        print("OK.")
 
     def verify_one_loop(self, alg, loop):
         assert len(loop) >= 2, "loop length at least 1"
@@ -152,11 +152,11 @@ class Proof:
 
 
 def verify(filename):
-    print "verifying: %s" % os.path.basename(filename)
+    print("verifying: %s" % os.path.basename(filename))
     proof = Proof()
     proof.read_input(filename)
     proof.verify()
-    print
+    print()
 
 for filename in sys.argv[1:]:
     verify(filename)
